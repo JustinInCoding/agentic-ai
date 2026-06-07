@@ -258,7 +258,7 @@ morning-newspaper/
 │   ├── run_daily_pipeline.py                # 每日自动运行入口
 │   ├── check_runtime_status.py              # 产物完整性与质量检查
 │   ├── run_tavily_plan.py                   # Tavily 搜索计划衔接
-│   └── serve_dashboard_8510.sh              # 8510 端口页面服务
+│   └── serve_dashboard_8510.sh              # 8510 Web 服务启停脚本
 ├── skills/
 │   └── morning-newspaper-assistant-skill/
 │       ├── SKILL.md                         # OpenClaw Skill 入口契约

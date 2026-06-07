@@ -86,7 +86,7 @@ python3 scripts/run_daily_pipeline.py --rebuild-dashboard-only
 
 这个脚本会：
 - 停掉已有的 8510 服务实例
-- 启动 `runtime/static_dashboard_server.py`
+- 在 `runtime/` 目录下启动 `python3 -m http.server 8510 --bind 0.0.0.0`
 
 ## 人工或模型回填点
 

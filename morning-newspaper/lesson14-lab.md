@@ -104,34 +104,41 @@ python scripts/collect_raw.py --skip-tavily
 项目目录：~/projects/agentic-ai/morning-newspaper
 
 要求：
-1. 先运行采集和正文抓取，产出：
+1. 先严格按 Skill 流程运行，产出：
    - runtime/collected_raw.json
    - runtime/content_enriched.json
    - runtime/title_candidates.json
    - runtime/title_shortlist_prompt.txt
-2. 然后为本轮输入补齐这 3 个 LLM 结果文件：
+2. 然后为本轮输入补齐这 3 个关键结果文件：
    - runtime/title_shortlist_result.json
    - runtime/draft_result.json
    - runtime/top10_ranking_result.json
-3. 之后继续 apply 链路，生成：
+3. 之后继续 apply 正式链路，生成：
+   - runtime/shortlist.json
+   - runtime/draft_input.json
+   - runtime/drafted_items.json
+   - runtime/top10_ranking_input.json
    - runtime/top10_publishable.json
    - runtime/dashboard.html
+4. 执行：
+   - ./scripts/serve_dashboard_8510.sh
 
-请不要复用旧的占位结果文件，不要使用 [TEST] 占位摘要。
-如果 LLM 结果文件没有为当前这轮输入正确生成，就不要假装正式页面已经完成。
+请不要复用旧的占位结果文件，不要继续使用 [TEST] 占位摘要。
+如果 title_shortlist_result.json、draft_result.json、top10_ranking_result.json 没有为当前这一轮输入正确生成，就不要假装正式页面已经完成。
 
 完成后告诉我：
 1. runtime/top10_publishable.json 是否存在，count 是否为 10
 2. runtime/dashboard.html 是否已更新
 3. scripts/check_runtime_status.py 是否通过
 4. summary_placeholders 是否为空
+5. 8510 Web 服务是否已启动
 ```
 
 > 关键判断：不要把"脚本跑成功"误当成"正式早报已经可交付"。必须确认当前这轮输入对应的 shortlist / draft / ranking 结果都已生成，并产出无占位摘要的正式页面。
 
 ---
 
-## 5. 放行页面端口 8510（手动）
+## 5. 云服务器-端口开放配置（手动）
 
 页面链接当前使用：
 
@@ -143,18 +150,7 @@ http://<你的服务器IP>:8510/dashboard.html
 
 ### 5.1 火山云安全组放行
 
-操作路径：
-
-```text
-火山云控制台
--> 云服务器 ECS
--> 找到对应服务器实例
--> 安全组
--> 入方向规则
--> 添加规则
-```
-
-填写规则：
+以火山引擎为例，操作路径：**云服务器 ECS → 对应实例 → 安全组 → 入方向规则 → 添加规则**
 
 | 项目 | 填写 |
 |---|---|
@@ -164,7 +160,9 @@ http://<你的服务器IP>:8510/dashboard.html
 | 端口范围 | `8510` |
 | 描述 | Morning Newspaper Assistant dashboard |
 
-### 5.2 服务器防火墙放行
+![火山引擎安全组端口放行示例](docs/screenshots/port_setting.png)
+
+### 5.2 服务器防火墙放行（可选）
 
 如果服务器启用了 `ufw`，发送给龙虾或自己在服务器执行：
 
@@ -179,12 +177,14 @@ sudo firewall-cmd --permanent --add-port=8510/tcp
 sudo firewall-cmd --reload
 ```
 
+> 多数云服务器默认未启用系统防火墙，安全组放行后即可访问。如果页面打不开再回来检查这一步。
+
 ---
 
-## 6. 启动页面服务（发给龙虾）
+## 6. 启动 Morning-Newspaper Web 服务（发给龙虾）
 
 ```text
-请启动 morning-newspaper 的早报页面服务。
+请启动 morning-newspaper 的早报 Web 服务。
 
 执行：
 cd ~/projects/agentic-ai/morning-newspaper
