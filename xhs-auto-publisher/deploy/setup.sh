@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_URL="https://github.com/DjangoPeng/agentic-ai"
+REPO_URL="https://github.com/JustinInCoding/agentic-ai"
 REPO_DIR="${HOME}/projects/agentic-ai"
 PROJECT_ROOT="${HOME}/projects/xhs-auto-publisher"
 
