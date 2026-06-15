@@ -84,7 +84,7 @@
 
 说明：
 - 这是“模型/规则理解结果”层，不等于最终写入飞书前的最终合并结果
-- 真正写 Customers 表前，还会应用“弱值保护”和字段合并规则
+- 真正写 客户信息表前，还会应用“弱值保护”和字段合并规则
 
 ---
 
@@ -156,9 +156,9 @@
 
 ---
 
-## 8. Customers 写入对象
+## 8. 客户信息写入对象
 
-当前项目最终落飞书时，更应关注的是 Customers 的最终写入结果。
+当前项目最终落飞书时，更应关注的是 客户信息的最终写入结果。
 
 常见字段：
 - `客户ID`
@@ -193,7 +193,7 @@
 
 ## 9. `opportunity_snapshot_row.json`
 
-写入飞书 OpportunitySnapshots 表的一条快照记录。
+写入飞书 商机快照表的一条快照记录。
 
 常见字段：
 - `商机ID`
@@ -232,7 +232,7 @@
 - `mode`: `upsert`
 - `key_field`: `客户ID`
 - `key`: 当前客户 ID
-- `update_fields`: Customers 最终写入字段
+- `update_fields`: 客户信息最终写入字段
 
 ### `opportunity_snapshot_table`
 - `mode`: `append`

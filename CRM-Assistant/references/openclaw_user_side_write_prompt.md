@@ -26,11 +26,11 @@
 目标 Base：
 {{base_link}}
 
-Customers 表：
+客户信息表：
 - table_id: {{customer_table_id}}
 - 用途：长期客户画像
 
-OpportunitySnapshots 表：
+商机快照表：
 - table_id: {{opportunity_table_id}}
 - 用途：每轮会议商机快照
 
@@ -80,13 +80,13 @@ OpportunitySnapshots 表：
 2. `opportunity_snapshot_row`
 
 第四步：写入飞书
-- Customers：按 `客户ID` 查找并更新；没有则新增
-- OpportunitySnapshots：每次会议直接追加一条新记录
+- 客户信息：按 `客户ID` 查找并更新；没有则新增
+- 商机快照：每次会议直接追加一条新记录
 - 如果当前环境具备飞书实际操作能力，请继续完成写入
 - 如果当前环境不具备实际写入能力，不要编造写入成功结果，只返回待写入内容和未写入原因
 
 写入规则：
-- 如果 Customers 某字段已有明确旧值，而本轮只能得到 `未明确`、`未知`、`待确认`、`null` 或空值，则不要覆盖旧值
+- 如果 客户信息某字段已有明确旧值，而本轮只能得到 `未明确`、`未知`、`待确认`、`null` 或空值，则不要覆盖旧值
 - `沟通风格`、`风险顾虑` 需要保留旧值并追加新值，去重后写回
 - 商机阶段只能是：`初次接触` / `需求确认` / `方案沟通` / `推进中` / `待成交` / `已成交`
 - 意向等级只能是：`low` / `medium` / `high`
@@ -96,8 +96,8 @@ OpportunitySnapshots 表：
 输出至少包含：
 1. 标准化输入：`context`、`transcript`
 2. 会议理解摘要
-3. Customers 待写入记录
-4. OpportunitySnapshots 待写入记录
+3. 客户信息待写入记录
+4. 商机快照待写入记录
 5. 标准 JSON
 6. 执行状态
 
