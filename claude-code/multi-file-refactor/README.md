@@ -51,14 +51,18 @@ bash claude-code/multi-file-refactor/setup.sh
 
 > 函数名、签名、异常类型都不同，所以不能"查找替换"一把梭——必须语义级理解后改写，这正是 Claude Code 的主场。
 
-## 共享 `FeishuClient` 收敛什么
+## 共享层 `common/feishu/` 收敛什么
 
-重构后两个 app 都 import `common/feishu_client.py` 里的一个客户端：
+重构后两个 app 都从一个 `common/feishu/` **包**导入（Claude Code 实测按职责拆成 6 个模块，而非单文件）：
 
-- **认证**：一处 `tenant_access_token`，不再各写各的
-- **端点**：默认值收口，不再到处硬编码 `open.feishu.cn`
-- **Bitable**：记录的增删改查收进客户端方法
-- **容错**：统一的错误处理，调用方不用各猜各的异常
+- **`errors.py`**：统一异常树 `FeishuApiError`（下挂 `FeishuAuthError` / `BitableSyncError` / `BitableAttachmentUploadError`）——调用方统一 `except`，不再各猜各的
+- **`auth.py`**：`get_tenant_access_token()` / `load_user_access_token()`，端点作参数传入，不再硬编码 `open.feishu.cn`
+- **`http.py`**：`post_json()` / `post_multipart()` 统一请求底座
+- **`bitable.py`**：记录增删改查 + 字段归一（`coerce_*` / `choose_write_action`）
+- **`client.py`**：`FeishuClient` 统一入口 + 附件上传
+- **`__init__.py`**：对外导出公共 API
+
+> 实测：去重约 **450 行**，财务 29 + CRM 2 = **31 个测试一遍全绿**、行为零变化。
 
 ## 目录结构
 
@@ -67,7 +71,7 @@ multi-file-refactor/
 ├── README.md
 ├── lesson17-lab.md          # 第 17 节实验手册（学生跟做）
 ├── setup.sh                 # 搭工作区：快照 + venv + 重构前绿色基线
-├── common/                  # 共享层；重构时由 Claude Code 在此落地 FeishuClient
+├── common/feishu/           # 共享层包（errors/auth/http/bitable/client）；重构时由 CC 落地
 ├── financial-automation/    # 快照（跑 setup.sh 后生成；原件在仓库顶层，不动）
 └── CRM-Assistant/           # 快照（同上）
 ```

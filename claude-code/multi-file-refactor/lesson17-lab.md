@@ -15,38 +15,18 @@
 | 2 | 本仓库已克隆到本地 | 例：`~/projects/agentic-ai` |
 | 3 | Python 3.10+ 与 git | `python3 --version` / `git --version` 能正常输出 |
 
-> 本节所有改动都发生在 `claude-code/multi-file-refactor/` 的**快照**里，**原始的 `financial-automation/`、`CRM-Assistant/` 目录不动**——这是真实工程里对待遗留代码的姿势：在隔离副本上动手，原件永远安全。
+> 本节的重构改动都发生在 `claude-code/multi-file-refactor/` 的**快照**里，**原始的 `financial-automation/`、`CRM-Assistant/` 目录不动**——这是真实工程里对待遗留代码的姿势：在隔离副本上动手，原件永远安全。
 
 ---
 
-## 1. 搭好实验工作区（让 Claude Code 跑脚本）
+## 1. 先让 Claude Code 读懂这几个 app（干净仓库，只读）
 
-在仓库根打开 Claude Code，把搭工作区这件事交给它：
+**这一步在搭工作区之前做**——此时仓库是干净的，Claude Code 读的是真实的 4 个 app。在仓库根打开它：
 
 ```bash
 cd ~/projects/agentic-ai   # 换成你的实际路径
 claude
 ```
-
-发送目标：
-
-```
-先读一下项目根的 CLAUDE.md 熟悉这个项目；然后运行
-claude-code/multi-file-refactor/setup.sh 把本节实验工作区建好
-（快照 financial-automation + CRM-Assistant、建好各自的 venv、跑通基线测试），
-完成后告诉我两个 app 的基线测试是否都通过。
-```
-
-完成后你应看到两个 app 的「重构前」测试都是绿的——这是后面验证重构没改坏的基准。
-
-> 💡 学习点：你没有手敲任何 venv / 测试命令。这些命令本就写在项目根 `CLAUDE.md` 里，Claude Code 一进仓库就知道——**给目标、不给步骤**，是本节的核心范式。
-> 如果 `claude-code/multi-file-refactor/` 里已经带了快照、想从零练，先 `rm -rf` 掉 `{financial-automation,CRM-Assistant,common}` 再跑脚本；或在你自己的 fork 上做。
-
----
-
-## 2. 让 Claude Code 读懂这几个 app
-
-仍在仓库根（这一步只读、不改任何文件）。
 
 **第一问**——逐个摸清结构：
 
@@ -66,6 +46,26 @@ morning-newspaper、xhs-auto-publisher）。先别改任何文件——逐个看
 它会指出 `financial-automation` 和 `CRM-Assistant` **各写了一遍**飞书认证（`get_tenant_access_token` vs `get_feishu_tenant_access_token`）——这就是下一步要消除的重复。
 
 > 💡 学习点：它不是把几十个文件一次读完，而是用 Glob/Grep **按需检索**、顺着线索翻具体文件。这就是它能驾驭「超出一次脑容量」的大项目的原因。
+> ⚠️ **顺序很重要**：先在干净仓库读懂、**再** setup。反过来的话，setup 把两个 app 快照进 `multi-file-refactor/` 后，CC 再扫仓库会看到 financial / CRM **各两份**，干扰它对「项目群」的判断。
+
+`/exit` 退出。
+
+---
+
+## 2. 搭好实验工作区（让 Claude Code 跑 setup.sh）
+
+读懂了，现在把**要改的那两个 app** 隔离进工作区再动手。仍在仓库根，发送目标：
+
+```
+运行 claude-code/multi-file-refactor/setup.sh 把本节实验工作区建好
+（快照 financial-automation + CRM-Assistant、建好各自的 venv、跑通基线测试），
+完成后告诉我两个 app 的基线测试是否都通过。
+```
+
+完成后你应看到两个 app 的「重构前」测试都是绿的——这是后面验证重构没改坏的基准。
+
+> 💡 学习点：搭环境这种重复样板活，也是写成脚本、一句话交给 CC——**给目标、不给步骤**。原件不动、两个独立 venv 项目并进一处，才谈得上抽一个共享层。
+> 如果 `claude-code/multi-file-refactor/` 里已带快照、想从零练，先 `rm -rf` 掉 `{financial-automation,CRM-Assistant,common}` 再跑脚本；或在你自己的 fork 上做。
 
 ---
 
@@ -96,13 +96,15 @@ claude
 每改一处给我看 diff；financial 改完再改 CRM，最后删掉两边旧的 token 函数。
 ```
 
+> 📦 你会拿到什么：CC 通常把共享层落成一个 `common/feishu/` **包**（按职责分层：`errors` 统一异常树 / `auth` / `http` / `bitable` / `client` / `__init__`），而不是单个文件——这才是更专业的分层。本课程实测去重约 **450 行**。
+
 **③ 跑测试验证**：
 
 ```
 改完了，把两个 app 的测试都跑一遍，看重构有没有破坏原有行为。
 ```
 
-如果测试报红（很正常——两边函数签名、异常类型本来就不同），让它自愈：
+测试**很可能一遍就过**（本课程实测就是干净通过）。万一报红——两边签名 / 异常类型本来不同，没对齐就会红——让它自愈：
 
 ```
 测试红了，看报错自己修，改完再跑，直到绿。
