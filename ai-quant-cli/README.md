@@ -17,16 +17,16 @@
 ### A. 跑现成的（复现 / 研究代码）
 ```bash
 pip install -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple   # 国内源更快
-# 下载年报 PDF 放进 data/（见 data/README.md，巨潮直链）
-python scripts/run_pipeline.py        # 一键端到端
+python scripts/run_pipeline.py        # 一键端到端（仓库已附样例年报，直接跑）
 ```
 报告出在 `reports/`，文件名 `report_<股票代码>_<报告期>_<时间戳>.html`——**多次跑、多家公司都不覆盖**，历史留痕。
 
 ### B. 从零自己造一遍（进阶，推荐——这就是课上做的）
-新开一个**空目录**，把本仓库的 `BUILD_PLAN.md` 和 `data/`（放好 PDF）拷进去，启动 Claude Code（**Auto 模式**），发一句：
-> 读 BUILD_PLAN.md，按里面的阶段一步步把这个系统做出来。每完成一个阶段就停下，等我说「继续」。
+**在你自己的另一个空目录里做，不要在本仓库的 `ai-quant-cli/` 里做**——这里的 `src/` 是做好的参考答案。两种练法：
+- **一步步练（推荐）**：照 [`lesson18-lab.md`](lesson18-lab.md) 的 prompt 一条条发给 Claude Code。
+- **省事**：把本仓库的 `BUILD_PLAN.md` 拷进你的空目录，启动 Claude Code（**Auto 模式**），发「读 BUILD_PLAN.md，一步步把系统做出来，每阶段停一下」让它自己跑。
 
-自己建完，再拿本仓库 `src/` 当参考实现对比。课程演示的就是这条路径。
+建完，拿本仓库 `src/` + `CLAUDE.md` 当参考答案对照。课程演示的就是这条路径。
 
 ## 结构
 | 路径 | 是什么 | 入库 |
@@ -35,9 +35,8 @@ python scripts/run_pipeline.py        # 一键端到端
 | `scripts/` | 各步入口 + `run_pipeline.py` 一键端到端 | ✓ |
 | `CLAUDE.md` / `BUILD_PLAN.md` | 项目记忆与设计约定 / 从零构建计划 | ✓ |
 | `analysis/findings_<代码>.json` | 各标的的研判结果（参考） | ✓ |
-| `data/parsed/financials.json` | 解析出的结构化数据样例 | ✓ |
-| `data/*.pdf` | 年报原件 | ✗ 自行下载（版权） |
-| `reports/` `build/` | 运行产物（报告网页、图表） | ✗ 跑一次就有 |
+| `data/*.pdf` | 年报原件 | ✓ 已附宁德 / 比亚迪两份样例 |
+| `data/parsed/` `reports/` `build/` | 运行产物（结构化数据、报告网页、图表） | ✗ 跑一次就有 |
 
 ## 数据
-年报 PDF 不入库。从巨潮资讯网（cninfo.com.cn）按股票代码搜「年度报告」下载，放进 `data/`（详见 `data/README.md`）。
+仓库已附宁德时代、比亚迪两份样例年报（`data/`），开箱即用。换标的从巨潮资讯网（cninfo.com.cn）按股票代码搜「年度报告」下载放进 `data/`（详见 `data/README.md`）。

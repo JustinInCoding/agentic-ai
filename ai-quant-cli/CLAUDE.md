@@ -14,7 +14,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 2. **任何脚本里都不调用大模型 API**，不引入 LLM SDK / 在线服务。
 3. **报告输出到 `reports/`**（文件名 `report_<股票代码>_<期>_<时间戳>.html`，每次运行独立、不覆盖历史）；结构化产物到 `data/parsed/`；图片到 `build/figures/`；研判产物到 `analysis/`。
 4. 调试时**遇报错自己修到跑通**（缺包、表格定位、数字格式、中文字体等），调试过程留在终端、不清屏。
-5. 年报 PDF 不入库（`.gitignore` 已排除 `data/*.pdf`）；`data/parsed/` 的结构化样例可入库。
+5. 年报 PDF：仓库已附宁德 / 比亚迪两份样例年报，其余 PDF 默认不入库；`data/parsed/` 视为生成产物不入库（从 PDF 重跑即可得到）。
 
 ## 架构（DAG，不是直线流水线）
 
