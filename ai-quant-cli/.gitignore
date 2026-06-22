@@ -1,0 +1,19 @@
+# --- 年报 PDF / 原始数据：不入库（版权稳妥）---
+data/*.pdf
+data/*.PDF
+
+# --- 产物目录：不入库 ---
+build/
+reports/
+
+# --- 解析产物：视为生成产物，不入库（只留 .gitkeep 占位）---
+data/parsed/*
+!data/parsed/.gitkeep
+
+# --- Python ---
+.venv/
+__pycache__/
+*.pyc
+
+# --- 编辑器/系统 ---
+.DS_Store
